@@ -13,6 +13,10 @@ class MapController(QObject):
             self.view.add_btn.clicked.connect(self.on_add_marker_clicked)
             self.view.center_btn.clicked.connect(self.on_center_clicked)
             self.view.clear_btn.clicked.connect(self.on_clear_markers)
+
+            # 新增：緊急停止 / 返回Home
+            self.view.stop_btn.clicked.connect(self.on_emergency_stop)
+            self.view.rtl_btn.clicked.connect(self.on_rtl)
         except Exception:
             # 如果 top_bar 被完全移除，這裡會發生例外，我們安全忽略
             pass
@@ -23,19 +27,15 @@ class MapController(QObject):
         # IMPORTANT: 等 WebView 載入完成後再 sync（避免 setCenter 等函式尚未定義）
         self.view.webview.page().loadFinished.connect(self.sync_model_to_view)
 
-        # 不在 __init__ 直接呼叫 sync_model_to_view()，要等 loadFinished
-
     def sync_model_to_view(self, reset_center=False):
         """把 model 同步到 view (JS)"""
         c = self.model.center
         z = self.model.zoom
 
         # set center and clear markers
-        # （這些 JS 函式在 page load 完後就已定義）
         if reset_center:
-           self.view.run_js(f"setCenter({c['lat']}, {c['lng']}, {z});")
+            self.view.run_js(f"setCenter({c['lat']}, {c['lng']}, {z});")
         self.view.run_js("clearMarkers();")
-
 
         coords = []
         for m in self.model.markers:
@@ -44,7 +44,6 @@ class MapController(QObject):
             self.view.run_js(js)
             coords.append([m['lat'], m['lng']])
 
-        # 畫線 (至少 2 點才畫)，使用 json.dumps 保持格式正確
         if len(coords) > 1:
             coord_js = json.dumps(coords)
             self.view.run_js(f"drawPath({coord_js});")
@@ -83,7 +82,19 @@ class MapController(QObject):
         }
         self.model.add_marker(marker)
         self.sync_model_to_view()
-        
+
+    # === 新增：控制按鈕事件 ===
+    def on_emergency_stop(self):
+        """緊急停止所有無人機"""
+        print("⚠️ 按下緊急停止")
+        self.model.emergency_stop()
+
+    def on_rtl(self):
+        """所有無人機返回Home"""
+        print("🟢 按下返回Home")
+        self.model.return_to_launch()
+
+
 class SettingsController:
     def __init__(self, model):
         self.model = model

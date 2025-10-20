@@ -82,27 +82,41 @@ class MapView(QMainWindow):
         v.setContentsMargins(8, 8, 8, 8)
         v.setSpacing(10)
         self.top_bar.setLayout(v)
-
+    
+        # --- 原有按鈕 ---
         clear_btn = QPushButton("清除航點")
         clear_btn.setFixedSize(150, 40)
         fly_btn = QPushButton("飛向第1航點")
         fly_btn.setFixedSize(150, 40)
         seq_btn = QPushButton("依序飛到所有航點")
         seq_btn.setFixedSize(150, 40)
-
+    
         v.addWidget(clear_btn)
         v.addWidget(fly_btn)
         v.addWidget(seq_btn)
-
+    
+        # --- 新增兩個按鈕 ---
+        stop_btn = QPushButton("緊急停止")
+        stop_btn.setFixedSize(150, 40)
+        rtl_btn = QPushButton("返回Home")
+        rtl_btn.setFixedSize(150, 40)
+    
+        v.addWidget(stop_btn)
+        v.addWidget(rtl_btn)
+    
+        # --- 保存引用以便在 controller 綁定 ---
         self.clear_btn = clear_btn
         self.fly_btn = fly_btn
         self.seq_btn = seq_btn
-
+        self.stop_btn = stop_btn
+        self.rtl_btn = rtl_btn
+    
+        # --- 固定位置與大小 ---
         self.top_bar.setFixedWidth(170)
         self.top_bar.setFixedHeight(500)
         self.top_bar.move(self.width() - 180, 20)
         self.top_bar.show()
-        
+
 
     def resizeEvent(self, event):
         self.top_bar.move(self.width() - 180, 20)

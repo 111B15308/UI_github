@@ -4,7 +4,7 @@ class DroneConfigDialog(QtWidgets.QDialog):
     def __init__(self, index):
         super().__init__()
         self.setWindowTitle(f"第 {index} 台無人機")
-        self.resize(300, 200)
+        self.resize(300, 100)
 
         layout = QtWidgets.QFormLayout(self)
 

@@ -5,7 +5,7 @@ class StartupDialog(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("啟動設定")
-        self.resize(300, 200)
+        self.resize(300, 100)
 
         layout = QtWidgets.QFormLayout(self)
 

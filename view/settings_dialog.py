@@ -4,8 +4,8 @@ from PyQt5 import QtWidgets, QtCore
 class SettingsDialog(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Drone Formation Control")
-        self.resize(400, 200)
+        self.setWindowTitle("無人機隊型設定")
+        self.resize(300, 100)
 
         layout = QtWidgets.QVBoxLayout(self)
 
@@ -13,7 +13,7 @@ class SettingsDialog(QtWidgets.QDialog):
         h1 = QtWidgets.QHBoxLayout()
         label_drone_count = QtWidgets.QLabel("無人機數量:")
         self.combo_drone_count = QtWidgets.QComboBox()
-        self.combo_drone_count.addItems(["3 台", "5 台"])
+        self.combo_drone_count.addItems(["1台", "3 台", "5 台"])
         h1.addWidget(label_drone_count)
         h1.addWidget(self.combo_drone_count)
         layout.addLayout(h1)
@@ -34,7 +34,8 @@ class SettingsDialog(QtWidgets.QDialog):
 
     def get_settings(self):
         """回傳使用者選擇的設定"""
+        count_map = {0: 1, 1: 3, 2: 5}  # 對應 ComboBox 的索引
         return {
-            "drone_count": 3 if self.combo_drone_count.currentIndex() == 0 else 5,
+            "drone_count": count_map.get(self.combo_drone_count.currentIndex(), 1),
             "formation": self.combo_formation.currentText()
         }

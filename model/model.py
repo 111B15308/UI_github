@@ -1,26 +1,23 @@
 from PyQt5.QtCore import QObject, pyqtSignal
 
 class MapModel(QObject):
+    # === Signals ===
     state_changed = pyqtSignal()
+    emergency_stop_signal = pyqtSignal()
+    rtl_signal = pyqtSignal()
 
     def __init__(self):
         super().__init__()
-        self._center = {"lat": 25.033964, "lng": 121.564468}  # 預設台北101
+        self._center = {"lat": 25.033964, "lng": 121.564468}  # 預設中心（台北101）
         self._zoom = 14
         self._markers = []
 
-        # 無人機參數
-        self.drone_settings = {
-            "port": "",
-            "ip": "",
-            "spacing": "",
-            "alt_step": "",
-            "rtl_height": "",
-            "speed": "",
-        }
-        self._drone_count = 3
-        self._formation = "Line"
+        # 模擬無人機設定
+        self.drone_count = 0
+        self.formation = "Line"
+        self.drone_configs = []
 
+    # === Map 狀態 ===
     @property
     def center(self):
         return self._center
@@ -51,25 +48,13 @@ class MapModel(QObject):
         self._markers = []
         self.state_changed.emit()
 
-    def set_drone_settings(self, settings: dict):
-        """存放無人機設定"""
-        self.drone_settings.update(settings)
-        self.state_changed.emit()
-    
-    @property
-    def drone_count(self):
-        return self._drone_count
-    
-    @drone_count.setter
-    def drone_count(self, val):
-        self._drone_count = val
-        self.state_changed.emit()
-    
-    @property
-    def formation(self):
-        return self._formation
-    
-    @formation.setter
-    def formation(self, val):
-        self._formation = val
-        self.state_changed.emit()
+    # === 無人機控制 ===
+    def emergency_stop(self):
+        """觸發所有無人機緊急停止"""
+        print("⚠️ 緊急停止")
+        self.emergency_stop_signal.emit()
+
+    def return_to_launch(self):
+        """觸發所有無人機返回 Home"""
+        print("所有無人機轉換為RTL模式")
+        self.rtl_signal.emit()
